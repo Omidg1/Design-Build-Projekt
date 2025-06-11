@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Patientportal - Forside</title>
+  <link rel="stylesheet" href="../static/patient_dashboard.css" />
+</head>
+<body>
+  <header>
+    <h1>Din Patientportal</h1>
+  </header>
+
+  <main>
+    <section class="user-info">
+      <h2>Velkommen, {{ navn }}</h2>
+      <p><strong>CPR-nummer:</strong> {{ cpr }}</p>
+    </section>
+
+    <section class="actions">
+      <h3>Hvad vil du gøre?</h3>
+      <a href="/konsultation" class="btn">Start e-konsultation</a>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; Gruppe 8 – Virtuel Patientportal</p>
+  </footer>
+</body>
+</html>
