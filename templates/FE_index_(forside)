@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Velkommen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Introduktion: overskrift og login-knap centreret -->
+<div class="intro">
+    <h1>Velkommen til fjernmonitoreringssystemet</h1>  <!-- HER. måske kalde det "Portal for hudvurdering" -->
+
+    <!-- Drop-down menu med links -->
+    <div class="dropdown">
+        <button onclick="toggleDropdown()" class="dropbtn">Log ind</button>
+        <div id="dropdown-content" class="dropdown-content">
+            <a href="patient-login.html">Log ind som Patient</a>
+            <a href="laege-login.html">Log ind som Læge</a>
+        </div>
+    </div>
+</div>
+
+<!-- Hjælp og kontakt sektion -->
+<div class="info-box">
+    <h2>Har du brug for hjælp?</h2>
+    <p>Læs vores <a href="#">brugerguide</a> eller <a href="#">ofte stillede spørgsmål</a>.</p>
+
+    <h3>Kontakt os</h3>
+    <p>
+        E-mail: <a href="mailto:support@fjernmonitorering.dk">support@fjernmonitorering.dk</a><br>
+        Telefon: 12 34 56 78
+    </p>
+
+    <h3>Om sundhedspersonale</h3>
+    <p>Systemet bruges af speciallæger og praktiserende læger til fjernmonitorering af aknepatienter.</p>
+</div>
+
+<!-- JavaScript til dropdown -->
+<script>
+    function toggleDropdown() {
+        document.getElementById("dropdown-content").classList.toggle("show");
+    }
+</script>
+
+</body>
+</html>
