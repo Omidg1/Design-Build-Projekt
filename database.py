@@ -1,20 +1,20 @@
-import mariadb
+import mysql.connector
 
 # Databasekonfigurationer
 DB_CONFIG = {
     "host": "127.0.0.1",
     "user": "sugrp204",
     "password": "F25-20-100-x20",
-    "database": "patient_konsulation",
+    "database": "sugrp204",
     "port": 3306
 }
 
 def get_db_connection():
     try:
-        conn = mariadb.connect(**DB_CONFIG)
+        conn = mysql.connector.connect(**DB_CONFIG)
         return conn
-    except mariadb.Error as e:
-        print(f"Error connecting to MariaDB: {e}")
+    except mysql.connector.Error as e:
+        print(f"Error connecting to MySQL: {e}")
         raise
 
 def setup_database():
@@ -70,12 +70,11 @@ def setup_database():
         """)
         conn.commit()
         print("Databasen og tabellerne er oprettet.")
-    except mariadb.Error as e:
+    except mysql.connector.Error as e:
         print(f"Error creating tables: {e}")
     finally:
         cursor.close()
         conn.close()
 
-# Kør funktionen
 if __name__ == "__main__":
     setup_database()
