@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Menu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Velkommen</h2>
+
+    <!-- Dropdown-knap -->
+    <div class="patient-actions" style="display: block;">
+        <button onclick="togglePatientDropdown()" class="dropbtn">Vælg handling</button>
+        <div id="patient-dropdown" class="dropdown-content">
+            <a href="upload-billede.html" target="_blank">Vedlæg billede</a>
+            <a href="sporgeskema.html" target="_blank">Udfyld spørgeskema</a>
+            <a href="feedback.html" target="_blank">Se feedback</a>
+            <a href="patient-dashboard.html">Se patientoversigt</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePatientDropdown() {
+        document.getElementById("patient-dropdown").classList.toggle("show");
+    }
+</script>
+
+</body>
+</html>
