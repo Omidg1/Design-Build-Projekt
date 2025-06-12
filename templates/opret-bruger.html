@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opret ny bruger</title>
+    <link rel="stylesheet" href="../static/login.css">
+</head>
+<body>
+    <header>
+        <h1>Opret ny patientbruger</h1>
+    </header>
+
+    <main>
+        <form method="POST" action="/opret">
+            <label for="cpr-nummer">CPR-nummer:</label>
+            <input type="text" id="cpr-nummer" name="cpr-nummer" required><br><br>
+
+            <label for="adgangskode">Adgangskode:</label>
+            <input type="password" id="adgangskode" name="adgangskode" required><br><br>
+
+            <button type="submit">Opret bruger</button>
+        </form>
+
+        <br>
+        <a href="/">← Tilbage til login</a>
+    </main>
+
+    <footer>
+        <p>&copy; E-konsultation</p>
+    </footer>
+</body>
+</html>
