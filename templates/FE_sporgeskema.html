@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Udfyld spørgeskema</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Udfyld spørgeskema</h2>
+
+        <form>
+            <label for="smerte">Hvor kraftige er dine smerter?</label>
+            <select id="smerte" name="smerte">
+                <option value="ingen">Ingen</option>
+                <option value="let">Let</option>
+                <option value="moderat">Moderat</option>
+                <option value="kraftig">Kraftig</option>
+            </select>
+
+            <label for="besked">Beskriv dine symptomer:</label>
+            <textarea id="besked" name="besked" rows="5"></textarea>
+
+            <button type="submit">Send svar</button>
+        </form>
+    </div>
+</body>
+</html>
