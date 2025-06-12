@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <title>Patient Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1>Din patientoversigt</h1>
+
+        <!-- Søgefelt til filtrering af konsultationer -->
+        <input type="text" id="searchInput" placeholder="Søg dato, status eller besked..." onkeyup="filterCards()" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc;">
+
+        <!-- Konsultationskort 1 -->
+        <div class="consultation-card">
+            <h2>📅 29. april 2025</h2>
+            <img src="images/eksempel1.jpg" alt="Hudområde uploadet af patient">
+            <p><strong>Status:</strong> ✅ Behandlet</p>
+            <p><strong>Besked:</strong> Vi har modtaget dit billede og vurderet hudområdet. Behandlingen kan fortsætte som planlagt.</p>
+        </div>
+
+        <!-- Konsultationskort 2 -->
+        <div class="consultation-card">
+            <h2>📅 23. april 2025</h2>
+            <img src="images/eksempel2.jpg" alt="Hudområde uploadet af patient">
+            <p><strong>Status:</strong> ⏳ Afventer vurdering</p>
+            <p><strong>Besked:</strong> Husk at udfylde spørgeskemaet ugentligt for at følge udviklingen.</p>
+        </div>
+
+        <!-- Tilbage til menu-link -->
+        <a href="patient-menu.html" class="back-link">← Tilbage til menu</a>
+    </div>
+
+    <!-- JavaScript: Søgefunktion -->
+    <script>
+    function filterCards() {
+        let input = document.getElementById('searchInput');
+        let filter = input.value.toLowerCase();
+        let cards = document.getElementsByClassName('consultation-card');
+
+        for (let i = 0; i < cards.length; i++) {
+            let cardText = cards[i].textContent || cards[i].innerText;
+            if (cardText.toLowerCase().includes(filter)) {
+                cards[i].style.display = "";
+            } else {
+                cards[i].style.display = "none";
+            }
+        }
+    }
+    </script>
+</body>
+</html>
