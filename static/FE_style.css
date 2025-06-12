@@ -45,19 +45,18 @@
     display: block;
 }
 
-/* Hjælpeboks (på forsiden, index)*/
+/* Hjælpeboks */
 .info-box {
     background-color: #f9f9f9;
-    padding: 10px;                       /* HER. 10 istedet for 30*/   
-    margin-top: 200px;                   /* HER. 200 istedet for 40*/
+    padding: 30px;
+    margin-top: 40px;
     border-top: 2px solid #0077cc;
     border-radius: 8px;
-    max-width: 400px;                    /* HER. 400 istedet for 600*/
+    max-width: 600px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     font-family: Arial, sans-serif;
-    font-size: 12px;                     /* HER. tilføjet ekstra linje, gør skriften mindre*/
 }
 
 .info-box a {
@@ -194,4 +193,84 @@ h1 {
 
 .container h1 {
     text-align: center;
+}
+
+/* Container for hele dashboard-indholdet */
+.dashboard-container {
+    max-width: 800px;        /* Siden begrænses i bredden */
+    margin: auto;            /* Centreret på skærmen */
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+/* Hvert kort repræsenterer én konsultation */
+.consultation-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #f7f9fc; /* Lys grå/blålig baggrund */
+}
+
+/* Styling af det uploadede billede */
+.consultation-card img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+/* Link tilbage til menuen */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #0077cc;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Container til hele dashboard-indholdet */
+.dashboard-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Hver konsultation vises som et kort */
+.consultation-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #f7f9fc;
+}
+
+/* Eventuelle billeder i dashboardet */
+.consultation-card img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin: 10px 0;
+}
+
+/* Tilbage-link */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    color: #0077cc;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
 }
