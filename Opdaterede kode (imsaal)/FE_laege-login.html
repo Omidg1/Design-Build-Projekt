@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+	<meta charset="utf-8">
+	<title>Læge Login</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="login-container">
+  <form method="POST" action="/login">
+  <h2>Læge Login</h2>
+
+  <label for="username">Brugernavn</label><br>
+  <input type="text" id="username" name="cpr-nummer"><br><br>
+
+  <label for="password">Adgangskode</label><br>
+  <input type="password" id="password" name="adgangskode"><br><br>
+
+  <button type="submit">Log ind</button>
+</form>
+</div>
+
+
+</body>
+</html>
