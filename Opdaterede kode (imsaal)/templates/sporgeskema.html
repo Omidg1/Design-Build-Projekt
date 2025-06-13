@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Akne e-konsultation</title>
+    <!-- Korrekt sti til CSS-fil i parallel mappe -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='uploade.css') }}">
+  </head>
+
+  <script>
+    function updateLabel(val) {
+      const label = document.getElementById("sliderValue");
+      const slider = document.getElementById("gener");
+      const percent = (val - slider.min) / (slider.max - slider.min);
+
+      // Justering: begræns positionen så den holder sig visuelt inden for slideren
+      const offset = 10; // halv bredde af værdiboksen i px (juster hvis du ændrer størrelse)
+      const sliderWidth = slider.offsetWidth - offset * 1.6;
+      const left = percent * sliderWidth + offset;
+
+      label.innerText = val;
+      label.style.left = `${left}px`;
+    }
+
+    // initial placering
+    window.onload = function () {
+      updateLabel(document.getElementById("gener").value);
+    };
+  </script>
+
+  <body>
+    <h1>Spørgeskema til e-konsultation (Akne)</h1>
+    <form id="consultationForm" method="POST" action="/sporgeskema" enctype="multipart/form-data">
+      <!-- Spørgsmål 1 -->
+      <div class="form-section">
+        <label for="status"
+          >1. Hvordan har din akne-tilstand ændret sig, siden sidste
+          konsultation?</label
+        >
+        <select id="status" name="status">
+          <option value="meget_bedre">Meget bedre</option>
+          <option value="lidt_bedre">Lidt bedre</option>
+          <option value="uændret">Uændret</option>
+          <option value="lidt_værre">Lidt værre</option>
+          <option value="meget_værre">Meget værre</option>
+        </select>
+        <textarea name="kommentar1" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 2 -->
+      <div class="form-section">
+        <label for="bivirkninger">2. Har du oplevet bivirkninger?</label>
+        <select id="bivirkninger" name="bivirkninger">
+          <option value="nej">Nej</option>
+          <option value="milde">Ja, milde</option>
+          <option value="moderate">Ja, moderate</option>
+          <option value="alvorlige">Ja, alvorlige</option>
+        </select>
+        <textarea name="kommentar2" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 3 -->
+      <div class="form-section">
+        <label for="medicin">3. Har du taget din medicin?</label>
+        <select id="medicin" name="medicin">
+          <option value="fuldt_ud">Ja, fuldt ud</option>
+          <option value="delvist">Delvist</option>
+          <option value="nej">Nej</option>
+        </select>
+        <textarea name="kommentar3" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 4 -->
+      <div class="form-section">
+        <label for="gener"
+          >4. Hvor generet føler du dig af i øjeblikket? (0 = ikke generet, 10 =
+          meget generet)</label
+        >
+        <div class="slider-container">
+          <div class="slider-labels">
+            <span>0</span>
+            <span>10</span>
+          </div>
+          <input
+            type="range"
+            id="gener"
+            name="gener"
+            min="0"
+            max="10"
+            oninput="updateLabel(this.value)"
+          />
+          <div class="slider-value" id="sliderValue">5</div>
+        </div>
+        <textarea name="kommentar4" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 5 -->
+      <div class="form-section">
+        <label for="symptomer">5. Oplever du ubehag?</label>
+        <select id="symptomer" name="symptomer">
+          <option value="nej">Nej</option>
+          <option value="smerte">Smerte</option>
+          <option value="kløe">Kløe</option>
+          <option value="irritation">Irritation</option>
+        </select>
+        <textarea name="kommentar5" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 6 -->
+      <div class="form-section">
+        <label>6. Forværret områder (vælg én eller flere):</label>
+        <div class="checkbox-row">
+          <label
+            ><input type="checkbox" name="områder" value="pande" /> Pande</label
+          >
+          <label
+            ><input type="checkbox" name="områder" value="kinder" />
+            Kinder</label
+          >
+          <label
+            ><input type="checkbox" name="områder" value="hage" /> Hage</label
+          >
+          <label
+            ><input type="checkbox" name="områder" value="bryst" /> Bryst</label
+          >
+          <label
+            ><input type="checkbox" name="områder" value="ryg" /> Ryg</label
+          >
+        </div>
+        <textarea name="kommentar6" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Spørgsmål 7 -->
+      <div class="form-section">
+        <label for="feedback">7. Ønsker du lægefeedback?</label>
+        <select id="feedback" name="feedback">
+          <option value="ja">Ja</option>
+          <option value="nej">Nej</option>
+        </select>
+        <textarea name="kommentar7" placeholder="Andet..."></textarea>
+      </div>
+
+      <!-- Billedupload -->
+      <div class="form-section">
+        <label for="billede"
+          >Upload billede, kun (.jpg, .jpeg, .png eller .pdf) filer:</label
+        >
+        <input
+          type="file"
+          id="billede"
+          name="billede"
+          accept=".jpg, .jpeg, .png, .pdf"
+        />
+        <button type="button" id="removeFileBtn">Fjern fil</button>
+        <!-- Tilføj denne linje -->
+      </div>
+
+      <button type="submit">Send</button>
+    </form>
+
+  </body>
+</html>

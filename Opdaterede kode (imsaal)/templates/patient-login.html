@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../static/login.css">
+</head>
+<body>
+    <header>
+        <h1>Velkommen til Patientportalen</h1>
+    </header>
+    
+    <main>
+        <h2>Patient Login</h2>
+        <form method="POST" action="/login">
+            <label for="cpr-nummer">CPR-nummer:</label>
+            <input type="text" id="cpr-nummer" name="cpr-nummer" required><br><br>
+
+            <label for="adgangskode">Adgangskode:</label>
+            <input type="password" id="adgangskode" name="adgangskode" required><br><br>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <hr style="margin: 20px 0;">
+
+        <p>Har du ikke en bruger?</p>
+        <form action="/opret" method="get">
+            <button type="submit">Opret ny bruger</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; E-konsulation</p>
+    </footer>
+</body>
+</html>
