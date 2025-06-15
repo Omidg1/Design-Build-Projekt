@@ -3,11 +3,16 @@ import mysql.connector
 import os
 from werkzeug.utils import secure_filename
 from database import get_db_connection
+from datetime import datetime
+from flask import send_from_directory
 
+SERVER_URL = "http://80.198.171.108:60070"
 app = Flask(__name__)
-app.secret_key = 'hemmelig_nøgle'  # skift til noget sikkert
+app.secret_key = 'hemmelig_nøgle'  # udskift i produktion!
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# ------------------ LOGIN & OPRET ------------------
 
 @app.route('/')
 def home():
@@ -51,16 +56,37 @@ def opret():
 
     return redirect('/')
 
+# ------------------ PATIENT MENU ------------------
+
 @app.route('/menu')
 def menu():
     if 'user_id' not in session:
         return redirect('/')
-    return render_template('patient-menu.html')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True, buffered=True)
+
+    cursor.execute("""
+        SELECT deadline
+        FROM paakraevet_konsultation
+        WHERE patient_id = %s AND besvaret = FALSE
+        ORDER BY deadline ASC
+    """, (session['user_id'],))
+    krav = cursor.fetchall()
+    if krav and "deadline" in krav:
+        krav["deadline"] = krav["deadline"].strftime("%d-%m-%Y kl. %H:%M")
+
+
+    cursor.close()
+    conn.close()
+
+    return render_template('patient-menu.html', krav=krav)
+
+# ------------------ PATIENT FEEDBACK & OVERSIGT ------------------
 
 @app.route('/feedback')
 def feedback():
     return render_template('feedback.html')
-
 
 @app.route('/dashboard')
 def dashboard():
@@ -83,18 +109,20 @@ def dashboard():
 
     return render_template('patient-dashboard.html', konsultationer=konsultationer)
 
+# ------------------ SPØRGESKEMA ------------------
 
 @app.route('/sporgeskema', methods=['GET', 'POST'])
 def sporgeskema():
-    if request.method == 'GET':
-        return render_template('sporgeskema.html')
-    
     if 'user_id' not in session:
         return "Ikke logget ind"
+
+    if request.method == 'GET':
+        return render_template('sporgeskema.html')
 
     data = request.form
     fil = request.files['billede']
     filnavn = None
+
     if fil and fil.filename:
         filnavn = secure_filename(fil.filename)
         fil.save(os.path.join(app.config['UPLOAD_FOLDER'], filnavn))
@@ -126,11 +154,127 @@ def sporgeskema():
         filnavn
     ))
 
+    # Marker påkrævet konsultation som besvaret
+    cursor.execute("""
+        UPDATE paakraevet_konsultation
+        SET besvaret = TRUE
+        WHERE patient_id = %s AND besvaret = FALSE
+        ORDER BY deadline ASC
+        LIMIT 1
+    """, (session['user_id'],))
+
     conn.commit()
     cursor.close()
     conn.close()
 
     return redirect('/menu')
+
+# ------------------ LÆGE API ------------------
+
+@app.route("/api/send-tidspunkt", methods=["POST"])
+def send_tidspunkt():
+    data = request.get_json()
+    dato = data.get("dato")
+    tid = data.get("tid")
+    deadline = f"{dato} {tid}"
+
+    patient_id = data.get("patient_id")
+
+    if not isinstance(patient_id, int):
+        return "Ugyldigt patient_id", 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO paakraevet_konsultation (patient_id, deadline)
+        VALUES (%s, %s)
+    """, (patient_id, deadline))
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return "OK", 200
+
+@app.route("/api/patienter")
+def hent_patienter():
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, cpr_nummer FROM patient_users ORDER BY id ASC")
+    patienter = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return patienter  # Flask returnerer automatisk JSON
+
+@app.route("/api/konsultationer/<int:patient_id>")
+def hent_konsultationer_for_patient(patient_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT 
+            akne_konsultation.id AS konsultation_id,
+            akne_konsultation.oprettet_tidspunkt,
+            akne_konsultation.symptomer,
+            akne_konsultation.status,
+            akne_konsultation.medicin,
+            akne_konsultation.bivirkninger,
+            akne_konsultation.gener,
+            akne_konsultation.billede_navn,
+            paakraevet_konsultation.besvaret,
+            patient_users.id AS patient_id,
+            patient_users.cpr_nummer
+        FROM akne_konsultation
+        LEFT JOIN paakraevet_konsultation 
+            ON akne_konsultation.patient_id = paakraevet_konsultation.patient_id
+        JOIN patient_users
+            ON akne_konsultation.patient_id = patient_users.id
+        WHERE akne_konsultation.patient_id = %s
+        ORDER BY akne_konsultation.oprettet_tidspunkt DESC
+    """, (patient_id,))
+
+    svar = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    for s in svar:
+        if s["billede_navn"]:
+            s["billede_url"] = f"/uploads/{s['billede_navn']}"
+
+    return svar
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route("/api/send-feedback", methods=["POST"])
+def send_feedback():
+    data = request.get_json()
+    besked = data.get("besked")
+    patient_id = data.get("patient_id")
+
+    if not besked or not patient_id:
+        return "Ugyldige data", 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        cursor.execute("""
+            UPDATE akne_konsultation
+            SET kommentar7 = %s
+            WHERE patient_id = %s
+            ORDER BY oprettet_tidspunkt DESC
+            LIMIT 1
+        """, (besked, patient_id))
+        conn.commit()
+    except mysql.connector.Error as e:
+        return f"Databasefejl: {e}", 500
+    finally:
+        cursor.close()
+        conn.close()
+
+    return "Feedback modtaget", 200
+
+
+# ------------------ SERVER ------------------
 
 if __name__ == '__main__':
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)

@@ -22,7 +22,7 @@ def setup_database():
     cursor = conn.cursor()
 
     try:
-        # Opret patient-login-tabellen
+        # Tabel: Brugere
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS patient_users (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,47 +31,61 @@ def setup_database():
         );
         """)
 
-        # Opret konsultationsbesvarelser
+        # Tabel: Konsultationsbesvarelser
         cursor.execute("""
         CREATE TABLE IF NOT EXISTS akne_konsultation (
             id INT AUTO_INCREMENT PRIMARY KEY,
             patient_id INT NOT NULL,
-            
+
             status VARCHAR(50),
             kommentar1 TEXT,
-            
+
             bivirkninger VARCHAR(50),
             kommentar2 TEXT,
-            
+
             medicin VARCHAR(50),
             kommentar3 TEXT,
-            
+
             gener INT,
             kommentar4 TEXT,
-            
+
             symptomer VARCHAR(50),
             kommentar5 TEXT,
-            
+
             pande BOOLEAN DEFAULT FALSE,
             kinder BOOLEAN DEFAULT FALSE,
             hage BOOLEAN DEFAULT FALSE,
             bryst BOOLEAN DEFAULT FALSE,
             ryg BOOLEAN DEFAULT FALSE,
             kommentar6 TEXT,
-            
+
             feedback VARCHAR(10),
             kommentar7 TEXT,
-            
+
             billede_navn VARCHAR(255),
             oprettet_tidspunkt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
             FOREIGN KEY (patient_id) REFERENCES patient_users(id) ON DELETE CASCADE
         );
         """)
+
+        # Tabel: Påkrævede konsultationer
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS paakraevet_konsultation (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            patient_id INT NOT NULL,
+            deadline DATETIME NOT NULL,
+            oprettet_af_laege TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            besvaret BOOLEAN DEFAULT FALSE,
+
+            FOREIGN KEY (patient_id) REFERENCES patient_users(id) ON DELETE CASCADE
+        );
+        """)
+
         conn.commit()
-        print("Databasen og tabellerne er oprettet.")
+        print("✅ Alle tabeller er oprettet korrekt.")
     except mysql.connector.Error as e:
-        print(f"Error creating tables: {e}")
+        print(f"❌ Fejl ved oprettelse af tabeller: {e}")
     finally:
         cursor.close()
         conn.close()
