@@ -8,23 +8,52 @@
 </head>
 <body>
 
-<div class="login-container">
-    <h2>Velkommen til din patientmenu</h2>
+    <div class="login-container">
+        <h2>Velkommen til din patientmenu</h2>
+    
+        <button onclick="togglePatientDropdown()" class="dropbtn">Vælg handling</button>
+        <div id="patient-dropdown" class="dropdown-content">
+            <a href="/feedback">Se feedback</a>
+            <a href="/dashboard">Se patientoversigt</a>
+            <a href="/">Log ud</a>
+        </div>
+    
+        {% if krav %}
+            <div class="warning">
+                ⚠️ Du har {{ krav|length }} påkrævede e-konsultationer:<br><br>
+                <ul>
+                    {% for k in krav %}
+                        <li>
+                            Deadline: <strong>{{ k.deadline }}</strong> – 
+                            <a href="/sporgeskema">👉 Klik her for at besvare</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p style="margin-top: 20px;">Ingen aktive krav om besvarelse</p>
+        {% endif %}
 
-    <button onclick="togglePatientDropdown()" class="dropbtn">Vælg handling</button>
-    <div id="patient-dropdown" class="dropdown-content">
-        <a href="/sporgeskema">Udfyld spørgeskema</a>
-        <a href="/feedback">Se feedback</a>
-        <a href="/dashboard">Se patientoversigt</a>
-        <a href="/">Log ud</a>
     </div>
-</div>
-
-<script>
-    function togglePatientDropdown() {
-        document.getElementById("patient-dropdown").classList.toggle("show");
-    }
-</script>
-
-</body>
-</html>
+    
+    <script>
+        function togglePatientDropdown() {
+            document.getElementById("patient-dropdown").classList.toggle("show");
+        }
+    
+        // Luk dropdown hvis man klikker udenfor
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropbtn')) {
+                var dropdowns = document.getElementsByClassName("dropdown-content");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
+    
+    </body>
+    </html>
