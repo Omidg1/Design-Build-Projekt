@@ -127,9 +127,14 @@ class LaegeDashboard:
                                 img = Image.open(io.BytesIO(img_res.content)).resize((200, 200))
                                 tk_img = ImageTk.PhotoImage(img)
                                 self.billeder.append(tk_img)  # Holder reference
-                                img_label = tk.Label(card, image=tk_img, bg="#ffffff")
-                                img_label.image = tk_img
+                                # Gem PIL-objektet og TK-versionen
+                                img_label = tk.Label(card, image=tk_img, bg="#ffffff", cursor="hand2")
+                                img_label.image = tk_img  # TK-version
+                                img_label.pil_image = img  # PIL-version til forstørret visning
                                 img_label.pack(side=tk.LEFT, padx=10)
+
+                                # Tilføj klik-event
+                                img_label.bind("<Button-1>", lambda e, pil_img=img: self.vis_stort_billede(pil_img))
                         except Exception as e:
                             print(f"Billedfejl: {e}")
 
@@ -149,6 +154,21 @@ class LaegeDashboard:
                     status_label.place(relx=1.0, x=-10, y=10, anchor="ne")
         except Exception as e:
             messagebox.showerror("Fejl", str(e))
+    
+    def vis_stort_billede(self, pil_image):
+        top = tk.Toplevel(self.master)
+        top.title("Forstørret billede")
+        top.geometry("600x600")
+
+        # Tilpas størrelsen hvis nødvendigt
+        resized = pil_image.resize((550, 550))
+        tk_img = ImageTk.PhotoImage(resized)
+
+        # Gem referencen for at undgå garbage collection
+        label = tk.Label(top, image=tk_img)
+        label.image = tk_img
+        label.pack(padx=10, pady=10)
+
 
     def send_feedback(self):
         besked = self.feedback_entry.get("1.0", tk.END).strip()
