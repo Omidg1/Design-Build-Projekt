@@ -86,7 +86,26 @@ def menu():
 
 @app.route('/feedback')
 def feedback():
-    return render_template('feedback.html')
+    if 'user_id' not in session:
+        return redirect('/')
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT kommentar7, oprettet_tidspunkt
+        FROM akne_konsultation
+        WHERE patient_id = %s AND kommentar7 IS NOT NULL AND kommentar7 != ''
+        ORDER BY oprettet_tidspunkt DESC
+    """, (session['user_id'],))
+
+    feedbacks = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return render_template('feedback.html', feedbacks=feedbacks)
+
+
 
 @app.route('/dashboard')
 def dashboard():

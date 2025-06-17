@@ -3,6 +3,7 @@ from tkinter import ttk, messagebox
 import requests
 import io
 from PIL import Image, ImageTk
+import functools
 
 SERVER_URL = "http://80.198.171.108:60070"
 
@@ -112,46 +113,51 @@ class LaegeDashboard:
                     return
 
                 for idx, k in enumerate(data):
-                    status_text = "✅ Besvaret" if k.get("besvaret") else "⏳ Ikke besvaret"
-                    status_color = "#28a745" if k.get("besvaret") else "#dc3545"
+                    besvaret = k.get("besvaret")
+                    status_text = "✅ Besvaret" if besvaret else "⏳ Ikke besvaret"
+                    status_color = "#28a745" if besvaret else "#dc3545"
 
                     card = tk.Frame(self.billed_frame, bg="#ffffff", bd=1, relief="solid", padx=10, pady=10)
                     card.pack(padx=10, pady=10, fill="x")
 
-                    img_label = None
-                    billede_url = k.get("billede_url")
-                    if billede_url and billede_url.strip():  # Sikrer at det ikke er tomt
-                        try:
-                            img_res = requests.get(f"{SERVER_URL}{billede_url}")
-                            if img_res.status_code == 200:
-                                img = Image.open(io.BytesIO(img_res.content)).resize((200, 200))
-                                tk_img = ImageTk.PhotoImage(img)
-                                self.billeder.append(tk_img)  # Holder reference
-                                # Gem PIL-objektet og TK-versionen
-                                img_label = tk.Label(card, image=tk_img, bg="#ffffff", cursor="hand2")
-                                img_label.image = tk_img  # TK-version
-                                img_label.pil_image = img  # PIL-version til forstørret visning
-                                img_label.pack(side=tk.LEFT, padx=10)
+                    # Kun vis billede og svar, hvis den er besvaret
+                    if besvaret:
+                        billede_url = k.get("billede_url")
+                        if billede_url and billede_url.strip():
+                            try:
+                                img_res = requests.get(f"{SERVER_URL}{billede_url}")
+                                if img_res.status_code == 200:
+                                    img = Image.open(io.BytesIO(img_res.content)).resize((200, 200))
+                                    tk_img = ImageTk.PhotoImage(img)
 
-                                # Tilføj klik-event
-                                img_label.bind("<Button-1>", lambda e, pil_img=img: self.vis_stort_billede(pil_img))
-                        except Exception as e:
-                            print(f"Billedfejl: {e}")
+                                    img_label = tk.Label(card, image=tk_img, bg="#ffffff", cursor="hand2")
+                                    img_label.image = tk_img
+                                    img_label.pack(side=tk.LEFT, padx=10)
 
+                                    img_label.bind("<Button-1>", functools.partial(self.vis_stort_billede, img.copy()))
+                            except Exception as e:
+                                print(f"Billedfejl: {e}")
+                    else:
+                        # Hvis ikke besvaret, vis en tom pladsholder
+                        img_label = tk.Label(card, text="(Ingen billede)", bg="#ffffff", width=25, height=12, fg="gray")
+                        img_label.pack(side=tk.LEFT, padx=10)
+
+                    # Tekstbeskrivelse uanset status
                     tekst = (
                         f"Konsultation #{idx+1}\n"
                         f"Tidspunkt: {k['oprettet_tidspunkt']}\n"
                         f"Status: {k['status']}\n"
-                        f"Symptomer: {k['symptomer']}\n"
-                        f"Medicin: {k['medicin']}\n"
-                        f"Bivirkninger: {k['bivirkninger']}\n"
-                        f"Gener: {k['gener']}/10\n"
+                        f"Symptomer: {k['symptomer'] if besvaret else '(ikke besvaret)'}\n"
+                        f"Medicin: {k['medicin'] if besvaret else '(ikke besvaret)'}\n"
+                        f"Bivirkninger: {k['bivirkninger']}/10\n" if besvaret else "Bivirkninger: (ikke besvaret)\n"
+                        f"Gener: {k['gener']}/10\n" if besvaret else "Gener: (ikke angivet)\n"
                     )
                     tekst_label = tk.Label(card, text=tekst, justify="left", anchor="w", bg="#ffffff", font=("Arial", 10))
                     tekst_label.pack(side=tk.LEFT, padx=10)
 
                     status_label = tk.Label(card, text=status_text, fg="white", bg=status_color, font=("Arial", 10, "bold"), padx=10, pady=2)
                     status_label.place(relx=1.0, x=-10, y=10, anchor="ne")
+
         except Exception as e:
             messagebox.showerror("Fejl", str(e))
     
