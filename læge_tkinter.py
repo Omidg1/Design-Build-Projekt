@@ -7,6 +7,36 @@ import functools
 
 SERVER_URL = "http://80.198.171.108:60070"
 
+class LoginWindow:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Login – Læge Dashboard")
+        self.master.geometry("350x200")
+        self.master.configure(bg="#f2f2f2")
+
+        tk.Label(master, text="Brugernavn:", bg="#f2f2f2").pack(pady=10)
+        self.username_entry = ttk.Entry(master)
+        self.username_entry.pack()
+
+        tk.Label(master, text="Adgangskode:", bg="#f2f2f2").pack(pady=10)
+        self.password_entry = ttk.Entry(master, show="*")
+        self.password_entry.pack()
+
+        tk.Button(master, text="🔐 Log ind", command=self.check_login).pack(pady=15)
+
+    def check_login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        # Simpel login-kontrol (du kan skifte til database senere)
+        if username == "læge" and password == "1234":
+            self.master.destroy()  # Luk login-vindue
+            root = tk.Tk()
+            app = LaegeDashboard(root)
+            root.mainloop()
+        else:
+            messagebox.showerror("Loginfejl", "Forkert brugernavn eller adgangskode.")
+
 class LaegeDashboard:
     def __init__(self, master):
         self.master = master
@@ -208,7 +238,8 @@ class LaegeDashboard:
         else:
             messagebox.showerror("Fejl", "Kunne ikke sende tidspunkt.")
 
+
 if __name__ == "__main__":
-    root = tk.Tk()
-    app = LaegeDashboard(root)
-    root.mainloop()
+    login_root = tk.Tk()
+    login = LoginWindow(login_root)
+    login_root.mainloop()
