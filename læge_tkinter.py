@@ -149,7 +149,7 @@ class LaegeDashboard:
                         f"Status: {k['status']}\n"
                         f"Symptomer: {k['symptomer'] if besvaret else '(ikke besvaret)'}\n"
                         f"Medicin: {k['medicin'] if besvaret else '(ikke besvaret)'}\n"
-                        f"Bivirkninger: {k['bivirkninger']}/10\n" if besvaret else "Bivirkninger: (ikke besvaret)\n"
+                        f"Bivirkninger: {k['bivirkninger'] if besvaret else '(ikke besvaret)'}\n"
                         f"Gener: {k['gener']}/10\n" if besvaret else "Gener: (ikke angivet)\n"
                     )
                     tekst_label = tk.Label(card, text=tekst, justify="left", anchor="w", bg="#ffffff", font=("Arial", 10))
@@ -161,16 +161,14 @@ class LaegeDashboard:
         except Exception as e:
             messagebox.showerror("Fejl", str(e))
     
-    def vis_stort_billede(self, pil_image):
+    def vis_stort_billede(self, pil_image, event=None):
         top = tk.Toplevel(self.master)
         top.title("Forstørret billede")
         top.geometry("600x600")
 
-        # Tilpas størrelsen hvis nødvendigt
         resized = pil_image.resize((550, 550))
         tk_img = ImageTk.PhotoImage(resized)
 
-        # Gem referencen for at undgå garbage collection
         label = tk.Label(top, image=tk_img)
         label.image = tk_img
         label.pack(padx=10, pady=10)
